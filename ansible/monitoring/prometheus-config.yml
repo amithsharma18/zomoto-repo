@@ -13,5 +13,5 @@ data:
         static_configs:
           - targets:
             # Replace with your k8s_master and k8s_worker IPs from inventory.ini
-            - "13.57.241.75:9100"
-            - "18.145.108.167:9100"
+            - "184.72.16.249:9100"
+            - "18.145.115.195:9100"

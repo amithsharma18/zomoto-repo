@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: zomato-container
-        image: yourdockerhubusername/zomato:v1
+        image: amith1808/zomoto-hub:v1
         imagePullPolicy: Always
 
         ports:
