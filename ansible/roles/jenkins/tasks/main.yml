@@ -1,0 +1,55 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Java and required packages
+  ansible.builtin.apt:
+    name:
+      - openjdk-21-jre
+      - fontconfig
+      - wget
+    state: present
+
+- name: Create APT keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download Jenkins GPG key
+  ansible.builtin.get_url:
+    url: https://pkg.jenkins.io/debian/jenkins.io-2026.key
+    dest: /etc/apt/keyrings/jenkins-keyring.asc
+    mode: "0644"
+
+- name: Add Jenkins repository
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/jenkins.list
+    content: |
+      deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/
+    mode: "0644"
+
+- name: Update apt cache after adding Jenkins repository
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Jenkins
+  ansible.builtin.apt:
+    name: jenkins
+    state: present
+
+- name: Enable and start Jenkins
+  ansible.builtin.systemd:
+    name: jenkins
+    state: started
+    enabled: yes
+
+- name: Verify Java installation
+  ansible.builtin.command: java -version
+  register: java_version
+  changed_when: false
+
+- name: Display Java version
+  ansible.builtin.debug:
+    msg: "{{ java_version.stderr }}"

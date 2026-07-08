@@ -1,0 +1,11 @@
+---
+
+- name: Configuring Zomato-Server - install Docker, Jenkins, nodejs-18, npm
+  hosts: Zomato-Server
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - docker
+    - jenkins
+    - node-npm

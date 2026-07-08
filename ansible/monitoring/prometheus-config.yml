@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+
+    scrape_configs:
+      - job_name: "node-exporter"
+        static_configs:
+          - targets:
+            # Replace with your k8s_master and k8s_worker IPs from inventory.ini
+            - "13.57.241.75:9100"
+            - "18.145.108.167:9100"

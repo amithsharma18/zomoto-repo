@@ -1,0 +1,54 @@
+---
+- name: Deploy Monitoring Stack to Kubernetes
+  hosts: k8s_master
+  become: yes
+  gather_facts: yes
+
+  tasks:
+
+    - name: Create monitoring directory
+      file:
+        path: /home/ubuntu/monitoring
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: Copy monitoring manifests
+      copy:
+        src: monitoring/
+        dest: /home/ubuntu/monitoring/
+
+    - name: Deploy Node Exporter
+      shell: kubectl apply -f /home/ubuntu/monitoring/node-exporter.yml
+
+    - name: Deploy Prometheus ConfigMap
+      shell: kubectl apply -f /home/ubuntu/monitoring/prometheus-config.yml
+
+    - name: Deploy Prometheus Deployment
+      shell: kubectl apply -f /home/ubuntu/monitoring/prometheus-deployment.yml
+
+    - name: Deploy Prometheus Service
+      shell: kubectl apply -f /home/ubuntu/monitoring/prometheus-service.yml
+
+    - name: Deploy Grafana Deployment
+      shell: kubectl apply -f /home/ubuntu/monitoring/grafana-deployment.yml
+
+    - name: Deploy Grafana Service
+      shell: kubectl apply -f /home/ubuntu/monitoring/grafana-service.yml
+
+    - name: Verify Monitoring Pods
+      shell: kubectl get pods -n monitoring
+      register: monitoring_pods
+
+    - name: Display Monitoring Pods
+      debug:
+        var: monitoring_pods.stdout_lines
+
+    - name: Verify Monitoring Services
+      shell: kubectl get svc -n monitoring
+      register: monitoring_services
+
+    - name: Display Monitoring Services
+      debug:
+        var: monitoring_services.stdout_lines
